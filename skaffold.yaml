@@ -1,0 +1,30 @@
+apiVersion: skaffold/v1beta2
+kind: Config
+build:
+  artifacts:
+  - image: changeme
+    context: .
+    docker: {}
+  tagPolicy:
+    envTemplate:
+      template: '{{.DOCKER_REGISTRY}}/cb-kubecd/kubecon-eu:{{.VERSION}}'
+  local: {}
+deploy:
+  kubectl: {}
+profiles:
+- name: dev
+  build:
+    artifacts:
+    - docker: {}
+    tagPolicy:
+      envTemplate:
+        template: '{{.DOCKER_REGISTRY}}/cb-kubecd/kubecon-eu:{{.DIGEST_HEX}}'
+    local: {}
+  deploy:
+    helm:
+      releases:
+      - name: kubecon-eu
+        chartPath: charts/kubecon-eu
+        setValueTemplates:
+          image.repository: '{{.DOCKER_REGISTRY}}/cb-kubecd/kubecon-eu'
+          image.tag: '{{.DIGEST_HEX}}'
