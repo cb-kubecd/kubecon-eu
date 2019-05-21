@@ -1,1 +1,11 @@
 buildPack: go
+pipelineConfig:
+  pipelines:
+    pullRequest:
+      preBuild:
+        steps:
+        - name: my-pre-step
+          container: busybox
+          command: echo
+          args:
+          - "Jenkins X ROCKS!!!"
